@@ -5,9 +5,13 @@ public class PlayerHealth : NetworkBehaviour
 {
     [SerializeField]
     int maxHealth = 3;
+    int XP = 1;
+
+    [SyncVar(hook = "OnHealthChanged")]
+    int health;
 
     Player player;
-    int health;
+
 
     void Awake()
     {
@@ -21,25 +25,35 @@ public class PlayerHealth : NetworkBehaviour
     }
 
     [Server]
-    public bool TakeDamage(int damage)
+    public int TakeDamage(int damage)
     {
-        bool dead = false;
+        bool died = false;
 
         if (health <= 0)
-            return dead;
+            return 0;
 
         health -= damage;
-        dead = health <= 0;
+        died = health <= 0;
 
-        RpcTakeDamage(dead);
+        RpcTakeDamage(died);
 
-        return dead;
+        return died ? XP : 0;
     }
 
     [ClientRpc]
-    void RpcTakeDamage(bool dead)
+    void RpcTakeDamage(bool died)
     {
-        if (dead)
+        if (isLocalPlayer)
+            PlayerCanvas.canvas.FlashDamageEffect();
+
+        if (died)
             player.Die();
+    }
+
+    void OnHealthChanged(int value)
+    {
+        health = value;
+        if (isLocalPlayer)
+            PlayerCanvas.canvas.SetHealth(value);
     }
 }

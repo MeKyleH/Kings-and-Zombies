@@ -17,18 +17,32 @@ public class Player : NetworkBehaviour
     float respawnTime = 5f;
 
     GameObject mainCamera;
+    NetworkAnimator anim;
 
     void Start()
     {
+        anim = GetComponent<NetworkAnimator>();
         mainCamera = Camera.main.gameObject;
 
         EnablePlayer();
     }
 
+    void Update()
+    {
+        if (!isLocalPlayer)
+            return;
+
+        anim.animator.SetFloat("Speed", Input.GetAxis("Vertical"));
+        anim.animator.SetFloat("Strafe", Input.GetAxis("Horizontal"));
+    }
+
     void EnablePlayer()
     {
         if (isLocalPlayer)
+        {
+            PlayerCanvas.canvas.Initialize();
             mainCamera.SetActive(false);
+        }
 
         onToggleShared.Invoke(true);
 
@@ -41,7 +55,10 @@ public class Player : NetworkBehaviour
     void DisablePlayer()
     {
         if (isLocalPlayer)
+        {
+            PlayerCanvas.canvas.HideReticule();
             mainCamera.SetActive(true);
+        }
 
         onToggleShared.Invoke(false);
 
@@ -53,6 +70,14 @@ public class Player : NetworkBehaviour
 
     public void Die()
     {
+        if (isLocalPlayer)
+        {
+            PlayerCanvas.canvas.WriteGameStatusText("You Died!");
+            PlayerCanvas.canvas.PlayDeathAudio();
+
+            anim.SetTrigger("Died");
+        }
+
         DisablePlayer();
 
         Invoke("Respawn", respawnTime);
@@ -65,6 +90,8 @@ public class Player : NetworkBehaviour
             Transform spawn = NetworkManager.singleton.GetStartPosition();
             transform.position = spawn.position;
             transform.rotation = spawn.rotation;
+
+            anim.SetTrigger("Restart");
         }
 
         EnablePlayer();

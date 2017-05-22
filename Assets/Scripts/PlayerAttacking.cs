@@ -1,41 +1,48 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
-public class PlayerAttacking : NetworkBehaviour
+public class PlayerShooting : NetworkBehaviour
 {
     [SerializeField]
-    float attackCooldown = .3f;
+    float shotCooldown = .3f;
     [SerializeField]
-    Transform attackPosition;
+    Transform firePosition;
     [SerializeField]
-    AttackEffectsManager attackEffects;
-    [SerializeField]
-    float attackDistance = 50f;
-    [SerializeField]
-    int attackPower = 1;
+    AttackEffectsManager shotEffects;
+
+    [SyncVar(hook = "OnScoreChanged")]
+    int score;
 
     float ellapsedTime;
-    bool canAttack;
+    bool canShoot;
+    int attackPower = 1;
+    float attackRange = 50f;
 
     void Start()
     {
-        attackEffects.Initialize();
+        shotEffects.Initialize();
 
         if (isLocalPlayer)
-            canAttack = true;
+            canShoot = true;
+    }
+
+    [ServerCallback]
+    void OnEnable()
+    {
+        score = 0;
     }
 
     void Update()
     {
-        if (!canAttack)
+        if (!canShoot)
             return;
 
         ellapsedTime += Time.deltaTime;
 
-        if (Input.GetButtonDown("Fire1") && ellapsedTime > attackCooldown)
+        if (Input.GetButtonDown("Fire1") && ellapsedTime > shotCooldown)
         {
             ellapsedTime = 0f;
-            CmdFireShot(attackPosition.position, attackPosition.forward);
+            CmdFireShot(firePosition.position, firePosition.forward);
         }
     }
 
@@ -47,26 +54,35 @@ public class PlayerAttacking : NetworkBehaviour
         Ray ray = new Ray(origin, direction);
         Debug.DrawRay(ray.origin, ray.direction * 3f, Color.red, 1f);
 
-        bool hitTarget = Physics.Raycast(ray, out hit, attackDistance);
+        bool result = Physics.Raycast(ray, out hit, attackRange);
 
-        if (hitTarget)
+        if (result)
         {
             PlayerHealth enemy = hit.transform.GetComponent<PlayerHealth>();
 
             if (enemy != null)
-                enemy.TakeDamage(attackPower);
-
+            {
+                int awardXP = enemy.TakeDamage(attackPower);
+                score += awardXP;
+            }
         }
 
-        RpcProcessShotEffects(hitTarget, hit.point);
+        RpcProcessShotEffects(result, hit.point);
     }
 
     [ClientRpc]
-    void RpcProcessShotEffects(bool playImpact, Vector3 impactPosition)
+    void RpcProcessShotEffects(bool playImpact, Vector3 point)
     {
-        attackEffects.PlayShotEffects();
+        shotEffects.PlayShotEffects();
 
         if (playImpact)
-            attackEffects.PlayImpactEffect(impactPosition);
+            shotEffects.PlayImpactEffect(point);
+    }
+
+    void OnScoreChanged(int value)
+    {
+        score = value;
+        if (isLocalPlayer)
+            PlayerCanvas.canvas.SetKills(value);
     }
 }

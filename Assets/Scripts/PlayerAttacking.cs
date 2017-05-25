@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
-public class PlayerShooting : NetworkBehaviour
+public class PlayerAttacking : NetworkBehaviour
 {
     [SerializeField]
     float shotCooldown = .3f;
@@ -15,8 +15,6 @@ public class PlayerShooting : NetworkBehaviour
 
     float ellapsedTime;
     bool canShoot;
-    int attackPower = 1;
-    float attackRange = 50f;
 
     void Start()
     {
@@ -54,7 +52,7 @@ public class PlayerShooting : NetworkBehaviour
         Ray ray = new Ray(origin, direction);
         Debug.DrawRay(ray.origin, ray.direction * 3f, Color.red, 1f);
 
-        bool result = Physics.Raycast(ray, out hit, attackRange);
+        bool result = Physics.Raycast(ray, out hit, 50f);
 
         if (result)
         {
@@ -62,8 +60,10 @@ public class PlayerShooting : NetworkBehaviour
 
             if (enemy != null)
             {
-                int awardXP = enemy.TakeDamage(attackPower);
-                score += awardXP;
+                bool wasKillShot = enemy.TakeDamage();
+
+                if (wasKillShot)
+                    score++;
             }
         }
 

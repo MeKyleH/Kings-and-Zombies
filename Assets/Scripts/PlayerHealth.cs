@@ -5,7 +5,6 @@ public class PlayerHealth : NetworkBehaviour
 {
     [SerializeField]
     int maxHealth = 3;
-    int XP = 1;
 
     [SyncVar(hook = "OnHealthChanged")]
     int health;
@@ -25,19 +24,19 @@ public class PlayerHealth : NetworkBehaviour
     }
 
     [Server]
-    public int TakeDamage(int damage)
+    public bool TakeDamage()
     {
         bool died = false;
 
         if (health <= 0)
-            return 0;
+            return died;
 
-        health -= damage;
+        health--;
         died = health <= 0;
 
         RpcTakeDamage(died);
 
-        return died ? XP : 0;
+        return died;
     }
 
     [ClientRpc]

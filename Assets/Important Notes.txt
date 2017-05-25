@@ -1,0 +1,6 @@
+*****ADDING A NEW PLAYER MESH*****
+Player -> Weapon Pivot -> Left and Right hand holds need to be updated with their transform to match the weapon that they are holding
+
+
+
+

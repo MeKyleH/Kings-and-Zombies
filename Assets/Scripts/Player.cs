@@ -36,22 +36,6 @@ public class Player : NetworkBehaviour
         anim.animator.SetFloat("Strafe", Input.GetAxis("Horizontal"));
     }
 
-    void EnablePlayer()
-    {
-        if (isLocalPlayer)
-        {
-            PlayerCanvas.canvas.Initialize();
-            mainCamera.SetActive(false);
-        }
-
-        onToggleShared.Invoke(true);
-
-        if (isLocalPlayer)
-            onToggleLocal.Invoke(true);
-        else
-            onToggleRemote.Invoke(true);
-    }
-
     void DisablePlayer()
     {
         if (isLocalPlayer)
@@ -66,6 +50,22 @@ public class Player : NetworkBehaviour
             onToggleLocal.Invoke(false);
         else
             onToggleRemote.Invoke(false);
+    }
+
+    void EnablePlayer()
+    {
+        if (isLocalPlayer)
+        {
+            PlayerCanvas.canvas.Initialize();
+            mainCamera.SetActive(false);
+        }
+
+        onToggleShared.Invoke(true);
+
+        if (isLocalPlayer)
+            onToggleLocal.Invoke(true);
+        else
+            onToggleRemote.Invoke(true);
     }
 
     public void Die()

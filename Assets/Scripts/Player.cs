@@ -93,6 +93,7 @@ public class Player : NetworkBehaviour
 
     public void Die()
     {
+        //set to -1 for gameObjects that aren't controlled by a player (bots)
         if (isLocalPlayer || playerControllerId == -1)
             anim.SetTrigger("Died");
 
@@ -109,6 +110,7 @@ public class Player : NetworkBehaviour
 
     void Respawn()
     {
+        //-1 is a bot
         if (isLocalPlayer || playerControllerId == -1)
             anim.SetTrigger("Restart");
 
@@ -144,6 +146,7 @@ public class Player : NetworkBehaviour
         Invoke("BackToLobby", 5f);
     }
 
+    // A split screen mode would need to also accept the playerControllerId as a parameter in order to tell which player won
     [ClientRpc]
     void RpcGameOver(NetworkInstanceId networkID, string name)
     {

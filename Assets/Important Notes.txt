@@ -1,6 +1,7 @@
 *****ADDING A NEW PLAYER MESH*****
 Player -> Weapon Pivot -> Left and Right hand holds need to be updated with their transform to match the weapon that they are holding
 
-
+*****MOVING A PHYSICS OBJECT ACROSS THE NETWORK - LIKE AN ERROR OR CANNONBALL*****
+The gameObject needs to have server authority, in networkIdentity transform it needs to sync the rigidbody
 
 

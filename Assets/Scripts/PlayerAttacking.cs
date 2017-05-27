@@ -6,6 +6,8 @@ public class PlayerAttacking : NetworkBehaviour
     [SerializeField]
     float shotCooldown = .3f;
     [SerializeField]
+    int killsToWin = 5;
+    [SerializeField]
     Transform firePosition;
     [SerializeField]
     AttackEffectsManager shotEffects;
@@ -13,11 +15,13 @@ public class PlayerAttacking : NetworkBehaviour
     [SyncVar(hook = "OnScoreChanged")]
     int score;
 
+    Player player;
     float ellapsedTime;
     bool canShoot;
 
     void Start()
     {
+        player = GetComponent<Player>();
         shotEffects.Initialize();
 
         if (isLocalPlayer)
@@ -62,8 +66,8 @@ public class PlayerAttacking : NetworkBehaviour
             {
                 bool wasKillShot = enemy.TakeDamage();
 
-                if (wasKillShot)
-                    score++;
+                if (wasKillShot && ++score >= killsToWin)
+                    player.Won();
             }
         }
 
@@ -84,5 +88,10 @@ public class PlayerAttacking : NetworkBehaviour
         score = value;
         if (isLocalPlayer)
             PlayerCanvas.canvas.SetKills(value);
+    }
+
+    public void FireAsBot()
+    {
+        CmdFireShot(firePosition.position, firePosition.forward);
     }
 }

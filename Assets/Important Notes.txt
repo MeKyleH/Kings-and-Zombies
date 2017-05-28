@@ -4,4 +4,24 @@ Player -> Weapon Pivot -> Left and Right hand holds need to be updated with thei
 *****MOVING A PHYSICS OBJECT ACROSS THE NETWORK - LIKE AN ERROR OR CANNONBALL*****
 The gameObject needs to have server authority, in networkIdentity transform it needs to sync the rigidbody
 
+*****GIT COMMANDS*****
+//get the latest changes before creating a branch
+git checkout master  //switches you to the master/latest branch
+git pull origin master  //gets latest changes
+git fetch --all  //gets all existing branhces
+git remote prune origin  //removes old branches
+
+//creating a branch
+//git branch <branch name>
+git branch kyle-create-playerprefs
+git checkout kyle-create-playerprefs
+
+//committing changes to your branch
+git status
+//make sure those are the files you want to change
+git add .
+git commit -m "this is a comment explaining my changes"
+// git push origin <branch name>
+git push origin kyle-create-playerprefs
+
 

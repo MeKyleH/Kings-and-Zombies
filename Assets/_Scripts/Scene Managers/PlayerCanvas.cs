@@ -46,6 +46,7 @@ public class PlayerCanvas : MonoBehaviour
     {
         reticule.enabled = true;
         gameStatusText.text = "";
+        ClearLogText();
     }
 
     public void HideReticule()

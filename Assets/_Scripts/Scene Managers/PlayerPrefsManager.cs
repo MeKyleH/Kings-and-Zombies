@@ -5,7 +5,8 @@ public class PlayerPrefsManager : MonoBehaviour
     const string MASTER_VOLUME_KEY = "master_volume";
     const string DIFFICULTY_KEY = "difficulty";
     const string LEVEL_KEY = "level_unlocked_";
-    const string NUM_LIVES = "number_of_lives_";
+    const string NUM_LIVES_KEY = "number_of_lives_";
+    const string CHOSEN_PLAYER_KEY = "chosen_player";
 
     public static void SetMasterVolume(float volume)
     {
@@ -71,17 +72,34 @@ public class PlayerPrefsManager : MonoBehaviour
 
     public static void SetNumLives(int lives)
     {
-        PlayerPrefs.SetInt(NUM_LIVES, lives);
+        PlayerPrefs.SetInt(NUM_LIVES_KEY, lives);
     }
 
     public static int GetNumLives()
     {
-        return PlayerPrefs.GetInt(NUM_LIVES);
+        return PlayerPrefs.GetInt(NUM_LIVES_KEY);
     }
 
     public static void NewGame()
     {
         PlayerPrefs.DeleteAll();
         SetNumLives(5);
+    }
+
+    public static void SetChosenPlayer(int playerInt)
+    {
+        if (playerInt >= 0 && playerInt <= 3)
+        {
+            PlayerPrefs.SetInt(CHOSEN_PLAYER_KEY, playerInt);
+        }
+        else
+        {
+            Debug.LogError("Selected player out of range");
+        }
+    }
+
+    public static int GetChosenPlayer()
+    {
+        return PlayerPrefs.GetInt(CHOSEN_PLAYER_KEY);
     }
 }

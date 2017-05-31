@@ -32,7 +32,6 @@ public class Player : NetworkBehaviour
     {
         anim = GetComponent<NetworkAnimator>();
         mainCamera = Camera.main.gameObject;
-
         EnablePlayer();
     }
 

@@ -21,6 +21,7 @@ public class PlayerCanvas : MonoBehaviour
     [SerializeField]
     AudioSource deathAudio;
 
+
     //Ensure there is only one PlayerCanvas
     void Awake()
     {

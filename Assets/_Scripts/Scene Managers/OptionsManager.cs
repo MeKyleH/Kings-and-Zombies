@@ -30,10 +30,4 @@ public class OptionsManager : MonoBehaviour
         PlayerPrefsManager.SetDifficulty(diffSlider.value);
         levelManager.LoadLevel("01a Main Menu");
     }
-
-    public void SetDefaults()
-    {
-        volumeSlider.value = 0.8f;
-        diffSlider.value = 0f;
-    }
 }
